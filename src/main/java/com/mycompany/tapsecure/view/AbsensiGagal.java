@@ -8,14 +8,14 @@ package com.mycompany.tapsecure.view;
  *
  * @author LENOVO
  */
-public class LoginAdmin extends javax.swing.JFrame {
+public class AbsensiGagal extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginAdmin.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AbsensiGagal.class.getName());
 
     /**
      * Creates new form DashboardAnalitikAdmin
      */
-    public LoginAdmin() {
+    public AbsensiGagal() {
         initComponents();
     }
 
@@ -81,7 +81,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new LoginAdmin().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new AbsensiGagal().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
