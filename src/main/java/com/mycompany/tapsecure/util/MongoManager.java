@@ -1,4 +1,4 @@
-package com.mycompany.tapsecure.objects;
+package com.mycompany.tapsecure.util;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;

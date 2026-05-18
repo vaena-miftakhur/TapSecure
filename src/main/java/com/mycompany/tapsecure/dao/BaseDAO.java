@@ -1,4 +1,4 @@
-package com.mycompany.tapsecure.objects;
+package com.mycompany.tapsecure.dao;
 
 import java.util.List;
 import org.bson.conversions.Bson;
