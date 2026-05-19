@@ -25,7 +25,7 @@ import org.bson.conversions.Bson;
 
 /**
  *
- * @author vaena
+ * @author Muhammad-Satria
  */
 public class KaryawanService {
 
@@ -56,7 +56,7 @@ public class KaryawanService {
      */
     public void tampilkanDaftarKaryawan() {
         List<Karyawan> daftar = DAO.findAll();
-        System.out.println("--- Daftar Karyawan Bank ---");
+        System.out.println("--- Daftar Karyawan ---");
         for (Karyawan k : daftar) {
             System.out.println(k.toString()); // Menggunakan format toString di sumber [7]
         }
@@ -88,8 +88,8 @@ public class KaryawanService {
 
         // Mengubah layout panel target menjadi BorderLayout
         panelTarget.setLayout(new BorderLayout());
-        // Mengatur warna background utama menjadi biru
-        panelTarget.setBackground(new Color(68, 114, 196));
+        // Mengatur warna background utama menjadi putih
+        panelTarget.setBackground(new Color(255, 255, 255));
 
         // Membuat panel grid khusus untuk menampung kotak/card
         JPanel gridPanel = new JPanel(new GridLayout(0, 3, 10, 10));
@@ -102,7 +102,7 @@ public class KaryawanService {
                 // Membuat panel 'Card' (box orange) untuk 1 karyawan
                 // Layout 4 baris 1 kolom agar kolor berisi Nama,ID, Departemen, panel control 
                 JPanel cardPanel = new JPanel(new GridLayout(4, 1, 0, 0));
-                cardPanel.setBackground(new Color(237, 125, 49)); // Warna background orange
+                cardPanel.setBackground(new Color(0, 0, 255)); // Warna background biru
 
                 // Memberikan garis tepi tipis membulat (rounded) dan padding/jarak ke dalam
                 cardPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -124,23 +124,23 @@ public class KaryawanService {
 
                 // Membuat panel kontrol 1 baris 2 kolom, berisi tombol edit dan hapus
                 JPanel controlPanel = new JPanel(new GridLayout(1, 2, 20, 15));
-                controlPanel.setBackground(new Color(237, 125, 49));
+                controlPanel.setBackground(new Color(0, 0, 255));
 
                 JButton tombolEdit = new JButton("Edit");
-                tombolEdit.setBackground(Color.ORANGE);
+                tombolEdit.setBackground(Color.WHITE);
                 tombolEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 tombolEdit.addActionListener((ActionEvent e) -> {
                     AdminPage.txtUID.setText(k.getUidRfid());
-                    AdminPage.txtIDK.setText(k.getIdKaryawan());
-                    AdminPage.txtIDK.setEnabled(false); 
-                    AdminPage.txtKName.setText(k.getNamaLengkap());
-                    AdminPage.txtKDep.setSelectedItem(k.getDepartemen());
+                    AdminPage.txtKRID.setText(k.getIdKaryawan());
+                    AdminPage.txtKRID.setEnabled(false); 
+                    AdminPage.txtKRName.setText(k.getNamaLengkap());
+                    AdminPage.txtKRDept.setSelectedItem(k.getDepartemen());
                     AdminPage.btnUpdate.setEnabled(true);
                     AdminPage.btnSave.setEnabled(false); 
                 });
                 JButton tombolDelete = new JButton("Delete");
-                tombolDelete.setBackground(Color.RED);
-                tombolDelete.setForeground(Color.WHITE);
+                tombolDelete.setBackground(Color.WHITE);
+                tombolDelete.setForeground(Color.BLACK);
                 tombolDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 tombolDelete.addActionListener((ActionEvent e) -> {
                     Object[] options = {"Ya, Hapus", "Batal"};

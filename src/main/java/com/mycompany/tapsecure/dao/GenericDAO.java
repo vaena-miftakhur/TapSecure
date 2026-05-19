@@ -1,6 +1,5 @@
 package com.mycompany.tapsecure.dao;
 
-import com.mycompany.tapsecure.dao.BaseDAO;
 import com.mycompany.tapsecure.util.MongoManager;
 import com.mongodb.client.MongoCollection;
 import org.bson.conversions.Bson;
