@@ -10,7 +10,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 
 public class MongoManager {
     private static MongoClient mongoClient;
-    private static final String DATABASE_NAME = "bank_absensi";
+    private static final String DATABASE_NAME = "tapsecure_db";
 
     public static MongoDatabase getDatabase() {
 
