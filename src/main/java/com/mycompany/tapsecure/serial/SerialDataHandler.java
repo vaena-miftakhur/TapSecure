@@ -9,6 +9,6 @@ package com.mycompany.tapsecure.serial;
  * @author vaena
  * @param (T)
  */
-public interface SerialDataHandler<T>{
+public interface SerialDataHandler<T> {
     void onDataReceived(T data);
 }

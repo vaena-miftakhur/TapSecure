@@ -5,10 +5,12 @@
 package com.mycompany.tapsecure;
 
 import com.mycompany.tapsecure.gui.AdminPage;
+import com.mycompany.tapsecure.services.SerialService;
+import java.awt.Frame;
 
 /**
  *
- * @author Muhammad-Satria
+ * @author vaena
  */
 public class MainApp extends javax.swing.JFrame {
     
@@ -18,6 +20,23 @@ public class MainApp extends javax.swing.JFrame {
      * Creates new form MainApp
      */
     public MainApp() {
+        
+        // 1. Koneksi sekali saja saat aplikasi start
+        SerialService.getInstance().connect("COM3", 9600);
+
+        // 2. Tambahkan Global Observer (misal untuk Logging)
+        SerialService.getInstance().addHandler(tagId -> {
+            System.out.println("Global Log: Kartu " + tagId + " terdeteksi.");
+            // Jalankan fungsi database di sini
+        });
+        
+        // 3. Contoh update UI di MainFrame
+        SerialService.getInstance().addHandler(tagId -> {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                //lblStatus.setText("User Terakhir: " + tagId);
+            });
+        });
+        
         initComponents();
     }
 
@@ -100,12 +119,9 @@ public class MainApp extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         // Buka halaman AdminPage
-    AdminPage adminPage = new AdminPage();
-    adminPage.setVisible(true);
-
-    // Tutup MainApp jika ingin langsung pindah
-    this.dispose();
+        AdminPage admin = new AdminPage();
+        admin.setVisible(true); 
+        admin.setExtendedState(Frame.MAXIMIZED_BOTH); 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
