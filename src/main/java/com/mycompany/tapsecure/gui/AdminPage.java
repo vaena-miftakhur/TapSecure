@@ -7,31 +7,21 @@ package com.mycompany.tapsecure.gui;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
+
+
 /**
  *
- * @author vaena
+ * @author Muhammad-Satria
  */
 public class AdminPage extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminPage.class.getName());
 
-        /**
+
+    /**
      * Creates new form AdminPage
      */
     public AdminPage() {
-        initComponents();
-        
-        // Mengatur agar jPanel1 menggunakan BorderLayout supaya bisa ditempeli konten secara penuh
-        jPanel1.setLayout(new java.awt.BorderLayout());
-        
-        // Saat login sukses, otomatis panggil KaryawanPanel yang berisi tabel absensi Anda
-        com.mycompany.tapsecure.gui.panel.KaryawanPanel karPanel = new com.mycompany.tapsecure.gui.panel.KaryawanPanel();
-        addContent(karPanel);
-        
-        // Memaksa aplikasi langsung terbuka maksimal satu layar penuh saat dijalankan
-        setExtendedState(MAXIMIZED_BOTH);
-    }
-
+        initComponents();         
+     }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,38 +34,63 @@ public class AdminPage extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        appContentPane = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(51, 153, 255));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 991, Short.MAX_VALUE)
+            .addGap(0, 893, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 562, Short.MAX_VALUE)
+            .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
-        jPanel2.setBackground(new java.awt.Color(0, 0, 204));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setPreferredSize(new java.awt.Dimension(250, 365));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(jPanel2, java.awt.BorderLayout.LINE_START);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 991, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 29, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 425, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanel3, java.awt.BorderLayout.LINE_END);
+
+        jPanel4.setBackground(new java.awt.Color(51, 153, 255));
+        jPanel4.setPreferredSize(new java.awt.Dimension(893, 40));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 893, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 40, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(jPanel4, java.awt.BorderLayout.PAGE_END);
+
+        appContentPane.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(appContentPane, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -96,39 +111,40 @@ public class AdminPage extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AdminPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(AdminPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(AdminPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AdminPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminPage().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> {
+            new AdminPage().setVisible(true);
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JPanel appContentPane;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
-    
-    // Fungsi penempel konten otomatis khusus untuk layout tema biru putih Anda
-    public void addContent(JPanel panel){
-        // Menghapus komponen lama di dalam jPanel1 (jika ada) agar tidak menumpuk
-        if(jPanel1.getComponentCount() > 1){ 
-            jPanel1.remove(0); 
-        }
-        // Menempelkan KaryawanPanel tepat di bagian tengah atas balok biru Anda
-        jPanel1.add(panel, BorderLayout.CENTER);
-        jPanel1.revalidate();
-        jPanel1.repaint();
-    }
 
+    public void addContent(JPanel panel){
+        if(appContentPane.getComponentCount() > 0){
+            appContentPane.removeAll();
+        }
+        
+        appContentPane.add(panel, BorderLayout.CENTER);
+        appContentPane.revalidate();
+        appContentPane.repaint();       
+    }
+    
 }
