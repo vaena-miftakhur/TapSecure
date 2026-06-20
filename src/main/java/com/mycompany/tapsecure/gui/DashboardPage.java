@@ -6,7 +6,7 @@ package com.mycompany.tapsecure.gui;
 
 /**
  *
- * @author mnish
+ * @author Muhammad-Satria
  */
 public class DashboardPage extends javax.swing.JFrame {
 

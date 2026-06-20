@@ -8,7 +8,7 @@ import javax.swing.JLabel;
  */
 /**
  *
- * @author mnish
+ * @author Muhammad-Satria
  */
 public class NewJFrame extends javax.swing.JFrame {
 
