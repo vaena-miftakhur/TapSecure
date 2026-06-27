@@ -234,4 +234,8 @@ public class KaryawanService {
         KaryawanPanel.showData("");
         JOptionPane.showMessageDialog(null, "Data karyawan berhasil dihapus.");
     }
+
+    public Karyawan findByUid(String hashedUid) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
