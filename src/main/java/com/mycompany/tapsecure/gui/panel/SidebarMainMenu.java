@@ -5,7 +5,6 @@
 package com.mycompany.tapsecure.gui.panel;
 
 import com.mycompany.tapsecure.gui.AdminPage;
-import com.mycompany.tapsecure.gui.AttendancePage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -132,10 +131,6 @@ public class SidebarMainMenu extends JPanel {
                         showPage(null);
                         break;
 
-                    case "KiosK":
-                        showPage(new AttendancePage());
-                        break;
-
                     case "Products":
                         showPage(null);
                         break;
@@ -143,10 +138,7 @@ public class SidebarMainMenu extends JPanel {
                     case "Orders":
                         showPage(null);
                         break;
-
-                    case "General":
-                        showPage(new Settings());
-                        break;
+                
 
                     case "Security":
                         showPage(null);

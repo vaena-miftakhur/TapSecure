@@ -30,4 +30,5 @@
             <version>RELEASE250</version>
         </dependency>
     </dependencies>
+    <name>TapSecure 2</name>
 </project>

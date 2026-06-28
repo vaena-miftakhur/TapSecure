@@ -236,6 +236,7 @@ public class KaryawanService {
     }
 
     public Karyawan findByUid(String hashedUid) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Bson filter = Filters.eq("uidRfid", hashedUid);
+        return DAO.findOne(filter);
     }
 }
