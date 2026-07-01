@@ -4,18 +4,90 @@
  */
 package com.mycompany.tapsecure.gui.panel;
 
+import com.mycompany.tapsecure.objects.LogAbsensi; // Sekarang aman, tidak ada konflik nama lagi!
+import com.mycompany.tapsecure.services.LogAbsensiService;
+import com.mycompany.tapsecure.services.KaryawanService;
+import com.mycompany.tapsecure.objects.Karyawan;
+import com.mycompany.tapsecure.util.EncryptionUtils;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
- * @author lenovo
+ * @author satriya, vaena
  */
-public class LogAbsensi extends javax.swing.JPanel {
+public class LogAbsensiPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form LogAbsensi
      */
-    public LogAbsensi() {
+    public LogAbsensiPanel() {
         initComponents();
+        
+        showData();
     }
+    
+        private void showData() {
+        // 1. AMBIL MODEL BAWAAN ASLI dari design NetBeans Anda yang ada di gambar (Id, Status, Waktu)
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        
+        // 2. Kosongkan baris lamanya saja
+        model.setRowCount(0);
+        
+        com.mycompany.tapsecure.services.LogAbsensiService service = new com.mycompany.tapsecure.services.LogAbsensiService();
+        com.mycompany.tapsecure.services.KaryawanService karyawanService = new com.mycompany.tapsecure.services.KaryawanService();
+        
+        // 3. Ambil data log absensi dari MongoDB
+        java.util.List<com.mycompany.tapsecure.objects.LogAbsensi> listLog = service.getAllLog(); 
+        
+        if (listLog == null || listLog.isEmpty()) {
+            return;
+        }
+
+        // 4. Jalankan perulangan baris data
+        for (com.mycompany.tapsecure.objects.LogAbsensi log : listLog) {
+            
+            // Set teks default awal agar kolom "Id" (Kolom pertama design Anda) wajib terisi teks
+            String idTampil = "Kartu Anonim"; 
+            
+            String hashedUidDariLog = log.getUidRfid();
+            
+            if (hashedUidDariLog != null && !hashedUidDariLog.isEmpty()) {
+                // Cari data master karyawan menggunakan hash UID utuh ke database
+                com.mycompany.tapsecure.objects.Karyawan karyawan = karyawanService.findByUid(hashedUidDariLog);
+                
+                if (karyawan != null) {
+                    // 💡 PROSES DEKRIPSI 2 ARAH (AES)
+                    // Jika data karyawan ditemukan, dekripsi ID aslinya untuk masuk kolom "Id"
+                    idTampil = com.mycompany.tapsecure.util.EncryptionUtils.decrypt(karyawan.getIdKaryawan());
+                } else {
+                    // Trik Fallback Sidang: Jika data karyawan null, paksa potong 8 huruf awal UID-nya agar kolom "Id" tidak melompong
+                    String shortUid = hashedUidDariLog.length() > 8 ? hashedUidDariLog.substring(0, 8) : hashedUidDariLog;
+                    idTampil = "UID: " + shortUid;
+                }
+            }
+            
+            String waktuTampil = log.getWaktuTap() != null ? log.getWaktuTap().toString() : "-";
+            
+            // 5. Masukkan data berurutan sesuai kolom di gambar design Anda (Kolom 0: Id, Kolom 1: Status, Kolom 2: Waktu)
+            model.addRow(new Object[]{
+                idTampil, 
+                log.getStatus(), 
+                waktuTampil
+            });
+        }
+    }
+
+
+
+   
+
+
+
+    
+        
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.

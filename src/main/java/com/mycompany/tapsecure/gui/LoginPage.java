@@ -220,20 +220,25 @@ public class LoginPage extends javax.swing.JFrame {
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
-    private void doLogin() {
-        String username = txtUsername.getText();
-        String password = new String(txtPassword.getPassword());
-        if (username.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mohon isi Username Anda");
-            txtUsername.requestFocus();
-        } else if (password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mohon isi Password Anda");
-            txtPassword.requestFocus();
-        } else {
-            AuthService userService = new AuthService();
-            userService.login(username, password, this);
+        private void doLogin() {
+            String username = txtUsername.getText().trim();
+            // Mengambil password mentah dari JPasswordField
+            String passwordPlain = new String(txtPassword.getPassword());
+
+            // Validasi input kosong langsung dengan teks Indonesia
+            if (username.isEmpty() || passwordPlain.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username dan Password tidak boleh kosong!");
+                return;
+            }
+
+            // Panggil AuthService bawaan dosen
+            AuthService authService = new AuthService();
+
+            // SESUAIKAN PARAMETER: kirim username, password mentah, dan referensi halaman login ini (this)
+            // Proses Hashing SHA-256 dan perpindahan halaman ke AdminPage diurus oleh AuthService
+            authService.login(username, passwordPlain, this);
         }
-    }
+
 
 
 }

@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import com.mycompany.tapsecure.gui.panel.KaryawanPanel;
 import com.mycompany.tapsecure.gui.panel.Settings;
+import com.mycompany.tapsecure.gui.panel.Reports;
 
 
 
@@ -29,6 +30,12 @@ public class AdminPage extends javax.swing.JFrame {
 
         // Persempit sidebar
         jPanel2.setPreferredSize(new java.awt.Dimension(180, 365));
+        
+        // Samakan warna semua tombol sidebar
+        jButton1.setBackground(new java.awt.Color(51, 51, 255));
+        jButton2.setBackground(new java.awt.Color(51, 51, 255));
+        jButton3.setBackground(new java.awt.Color(51, 51, 255));
+        jButton4.setBackground(new java.awt.Color(51, 51, 255));
 
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 
@@ -38,7 +45,13 @@ public class AdminPage extends javax.swing.JFrame {
                 .getImage().getScaledInstance(155, 60, java.awt.Image.SCALE_SMOOTH)
         ));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-     }
+    
+        appContentPane.setLayout(new java.awt.BorderLayout(0, 0));
+        
+        // Memastikan frame merender ulang layout terbaru dengan benar
+        this.revalidate();
+        this.repaint();
+    }
 
 
     /**
@@ -98,6 +111,11 @@ public class AdminPage extends javax.swing.JFrame {
 
         jButton4.setBackground(new java.awt.Color(0, 51, 255));
         jButton4.setText("Report");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -197,6 +215,18 @@ public class AdminPage extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        // 1. Bersihkan isi appContentPane dari panel sebelumnya
+        appContentPane.removeAll();
+
+        // 2. Buat objek panel dengan nama kelas baru: LogAbsensiPanel
+        com.mycompany.tapsecure.gui.panel.LogAbsensiPanel logPanel = new com.mycompany.tapsecure.gui.panel.LogAbsensiPanel();
+
+        // 3. Masukkan LogAbsensiPanel ke bagian tengah layout AdminPage
+        appContentPane.add(logPanel, java.awt.BorderLayout.CENTER);
+
+        // 4. Render ulang komponen layar agar langsung berubah di samping sidebar
+        appContentPane.revalidate();
+        appContentPane.repaint();
       
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -204,6 +234,22 @@ public class AdminPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         addContent(new Settings());
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+         // 1. Bersihkan kontainer kanan dari panel sebelumnya
+        appContentPane.removeAll();
+        
+        // 3. Buat objek panel Reports (Sudah memanggil import di baris atas berkas Anda)
+        Reports reportPanel = new Reports();
+        
+
+        // 4. Masukkan dengan parameter CENTER agar panel laporan melar full layar di konten AdminPage
+        appContentPane.add(reportPanel, java.awt.BorderLayout.CENTER);
+        
+        // 5. Refresh grafis layar
+        appContentPane.revalidate();
+        appContentPane.repaint();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments

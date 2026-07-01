@@ -25,7 +25,7 @@ import org.bson.conversions.Bson;
 
 /**
  *
- * @author Muhammad-Satria
+ * @author Muhammad-Satria, vaena
  */
 public class KaryawanService {
 
@@ -115,7 +115,8 @@ public class KaryawanService {
                 lblNama.setForeground(Color.WHITE);
 
                 // Membuat Label ID Karyawan & Set warna teks jadi Putih
-                JLabel lblIDK = new JLabel("ID Karyawan: " + k.getIdKaryawan());
+                //  KODE YANG BENAR (Didekripsi dulu sebelum tampil di card):
+                JLabel lblIDK = new JLabel("ID Karyawan: " + com.mycompany.tapsecure.util.EncryptionUtils.decrypt(k.getIdKaryawan()));
                 lblIDK.setForeground(Color.WHITE);
 
                 // Membuat Label Departemen & Set warna teks jadi Putih
@@ -188,55 +189,52 @@ public class KaryawanService {
 
     /**
      * 3.READ (One): Mencari satu karyawan spesifik berdasarkan UID RFID [5],
-     * [6] Sangat krusial untuk alur Tap Kartu pada Pertemuan 14 [8].
-     *
-     * @param key
-     * @return
+         * [6] Sangat krusial untuk alur Tap Kartu pada Pertemuan 14.
+     */
+    public Karyawan findByUid(String hashedUid) {
+        try {
+            // Bersihkan string dan pastikan huruf kecil agar pencarian ke MongoDB 100% akurat
+            String cleanUid = hashedUid.trim().toLowerCase();
+            return DAO.findOne(Filters.eq("uidRfid", cleanUid));
+        } catch (Exception e) {
+            System.err.println("Gagal mencari karyawan: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 4. SEARCH: Fungsi pencarian data berdasarkan kemiripan nama.
      */
     public List<Karyawan> cariKaryawan(String key) {
-        List<Bson> filters = new ArrayList<>();
-        // Get all fields from the Karyawan class
-        for (Field field : Karyawan.class.getDeclaredFields()) {
-            // Skip the uidRfid field and non-string fields if necessary
-            if (field.getName().equals("uidRfid")) {
-                continue;
-            }
-            filters.add(Filters.regex(field.getName(), key, "i"));
-        }
-        // Search and return Karyawan objects directly
-        List<Karyawan> results = DAO.findMany(Filters.or(filters));
-        return results;
-    }
-
-    /**
-     * 4.UPDATE: Memperbarui data karyawan menggunakan filter Bson [5], [6]
-     *
-     * @param newK
-     */
-    public void updateKaryawan(Karyawan newK) {
-        Bson filter = Filters.eq("idKaryawan", newK.getIdKaryawan());
-        Karyawan k = DAO.findOne(filter);
-        if (k != null) {
-            DAO.update(filter, newK);
-            KaryawanPanel.showData("");
-            JOptionPane.showMessageDialog(null, "Data berhasil diperbarui!");
+        try {
+            return DAO.findMany(Filters.regex("namaLengkap", key, "i"));
+        } catch (Exception e) {
+            return new ArrayList<>();
         }
     }
 
     /**
-     * 5.DELETE: Menghapus data karyawan dari database [5], [6]
-     *
-     * @param idK
+     * 5. DELETE: Fungsi menghapus data berdasarkan ID Karyawan.
      */
-    public void hapusKaryawan(String idK) {
-        Bson filter = Filters.eq("idKaryawan", idK);
-        DAO.delete(filter); // Menggunakan deleteOne [6]
-        KaryawanPanel.showData("");
-        JOptionPane.showMessageDialog(null, "Data karyawan berhasil dihapus.");
+    public void hapusKaryawan(String idKaryawan) {
+        try {
+            DAO.delete(Filters.eq("idKaryawan", idKaryawan));
+            JOptionPane.showMessageDialog(null, "Data karyawan berhasil dihapus.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Gagal menghapus data: " + e.getMessage());
+        }
     }
 
-    public Karyawan findByUid(String hashedUid) {
-        Bson filter = Filters.eq("uidRfid", hashedUid);
-        return DAO.findOne(filter);
+    /**
+     * 6. UPDATE: Fungsi untuk memperbarui data ke MongoDB.
+     */
+    public boolean updateKaryawan(Karyawan karyawan) {
+        try {
+            DAO.update(Filters.eq("idKaryawan", karyawan.getIdKaryawan()), karyawan);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
+

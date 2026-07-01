@@ -24,5 +24,18 @@ public class LogAbsensiService {
         logDAO.save(log); // Menyimpan ke MongoDB [7]
     }
     
+        // Mengambil semua data log dari MongoDB menggunakan findAll() bawaan GenericDAO Anda
+    public java.util.List<LogAbsensi> getAllLog() {
+        try {
+            // Langsung panggil tanpa parameter di dalam kurung
+            return logDAO.findAll(); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new java.util.ArrayList<>();
+        }
+    }
+
+
+    
     
 }

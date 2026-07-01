@@ -229,33 +229,41 @@ public class KaryawanPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_txtKRDeptActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        Karyawan K = new Karyawan();
-        K.setUidRfid(SecurityUtils.getHash(txtUID.getText(), SecurityUtils.SHA_256)); // hash dulu
-        K.setIdKaryawan(txtKRID.getText());
-        K.setNamaLengkap(txtKRName.getText());
-        K.setDepartemen(txtKRDept.getSelectedItem().toString());
-        KaryawanService service = new KaryawanService();
-        service.tambahKaryawan(K);
+        Karyawan karyawan = new Karyawan();
+        
+        // Enkripsi 1 Arah (SHA-256) untuk UID RFID
+        karyawan.setUidRfid(SecurityUtils.getHash(txtUID.getText().trim(), SecurityUtils.SHA_256));
+        
+        // Enkripsi 2 Arah (AES) -> Diacak menggunakan Kunci Rahasia VM Options Anda
+        karyawan.setIdKaryawan(EncryptionUtils.encrypt(txtKRID.getText().trim()));
+        
+        karyawan.setNamaLengkap(txtKRName.getText().trim());
+        karyawan.setDepartemen(txtKRDept.getSelectedItem().toString());
+
+        new KaryawanService().tambahKaryawan(karyawan);
+        refresAll();
         showData("");
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Karyawan K = new Karyawan();
-        K.setUidRfid(SecurityUtils.getHash(txtUID.getText(), SecurityUtils.SHA_256)); // hash dulu
-        K.setIdKaryawan(txtKRID.getText());
-        K.setNamaLengkap(txtKRName.getText());
-        K.setDepartemen(txtKRDept.getSelectedItem().toString());
-        KaryawanService service = new KaryawanService();
-        service.updateKaryawan(K);
+        Karyawan karyawan = new Karyawan();
+        karyawan.setUidRfid(SecurityUtils.getHash(txtUID.getText().trim(), SecurityUtils.SHA_256));
+        karyawan.setIdKaryawan(EncryptionUtils.encrypt(txtKRID.getText().trim()));
+        karyawan.setNamaLengkap(txtKRName.getText().trim());
+        karyawan.setDepartemen(txtKRDept.getSelectedItem().toString());
+
+        new KaryawanService().updateKaryawan(karyawan);
         refresAll();
+        showData("");
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         refresAll();
+        showData("");
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
-        showData(txtCari.getText());
+        showData(txtCari.getText().trim());
     }//GEN-LAST:event_txtCariKeyReleased
 
     private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
@@ -284,8 +292,7 @@ public class KaryawanPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
     
     public static void showData(String key) {
-        KaryawanService K = new KaryawanService();
-        K.tampilKaryawan(jPanel4, key);
+        new KaryawanService().tampilKaryawan(jPanel4, key);
     }
 
     private void refresAll() {

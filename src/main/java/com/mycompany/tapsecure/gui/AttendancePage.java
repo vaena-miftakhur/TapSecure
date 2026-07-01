@@ -12,6 +12,7 @@ import com.mycompany.tapsecure.services.LogAbsensiService;
 import com.mycompany.tapsecure.services.SerialService;
 import com.mycompany.tapsecure.util.EncryptionUtils;
 import com.mycompany.tapsecure.util.SecurityUtils;
+import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -66,9 +67,13 @@ public class AttendancePage extends javax.swing.JFrame {
                         LogAbsensiService logService = new LogAbsensiService();
                         Karyawan k = krService.findByUid(hashedUid);
                         logService.simpanLog(hashedUid, Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
-                        if (k != null) {
+                                                if (k != null) {
                             jLabel3.setText("Nama Lengkap: " + k.getNamaLengkap());
-                            jLabel4.setText("ID Karyawan: " + k.getIdKaryawan());
+                            
+                            // 💡 PROSES DEKRIPSI 2 ARAH (AES) UNTUK INPUT ENTER MANUAL
+                            String decryptedID = EncryptionUtils.decrypt(k.getIdKaryawan());
+                            jLabel4.setText("ID Karyawan: " + decryptedID);
+                            
                             jLabel5.setText("Departemen: " + k.getDepartemen());
                             updateLabelWithDelay(jLabel7, "Absensi diterima. Terimakasih");
                         } else {
@@ -95,6 +100,8 @@ public class AttendancePage extends javax.swing.JFrame {
         jLabel7.setText(Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
         updateLabelWithDelay(jLabel7, "");
         setupAttendanceWorkflow();
+        
+        registerHandler();
     }
 
     /**
@@ -396,5 +403,34 @@ public class AttendancePage extends javax.swing.JFrame {
         delayThread.setDaemon(true);         
         delayThread.start();
     }
-
+    
+        private void registerHandler() {
+        // Menggunakan pola observer tunggal dari SerialService milik Anda
+        SerialService.getInstance().addHandler(rawData -> {
+            String uid = rawData.trim();
+            if (!uid.isEmpty()) {
+                // 1 Arah (SHA-256) -> UID langsung di-hash untuk dicari ke database master karyawan
+                String hashedUid = SecurityUtils.getHash(uid, SecurityUtils.SHA_256);
+                
+                KaryawanService krService = new KaryawanService();
+                LogAbsensiService logService = new LogAbsensiService();
+                
+                Karyawan k = krService.findByUid(hashedUid);
+                logService.simpanLog(hashedUid, Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
+                
+                if (k != null) {
+                    jLabel3.setText("Nama Lengkap: " + k.getNamaLengkap());
+                    
+                    // 💡 PROSES DEKRIPSI 2 ARAH (AES) UNTUK TEMPEL KARTU OTOMATIS
+                    String decryptedID = EncryptionUtils.decrypt(k.getIdKaryawan());
+                    jLabel4.setText("ID Karyawan: " + decryptedID);
+                    
+                    jLabel5.setText("Departemen: " + k.getDepartemen());
+                    updateLabelWithDelay(jLabel7, "Absensi diterima. Terimakasih");
+                } else {
+                    updateLabelWithDelay(jLabel7, "Kartu Tidak Terdaftar!");
+                }
+            }
+        });
+    }
 }
