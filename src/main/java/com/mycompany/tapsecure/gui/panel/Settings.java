@@ -6,6 +6,13 @@ package com.mycompany.tapsecure.gui.panel;
 
 import java.util.prefs.Preferences;
 import com.mycompany.tapsecure.gui.AttendancePage;
+import java.util.Locale;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.awt.Window;
+import com.mycompany.tapsecure.services.I18nService;
+import com.mycompany.tapsecure.gui.AdminPage;
+
 
 /**
  *
@@ -174,6 +181,11 @@ public class Settings extends javax.swing.JPanel {
 
         jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Indonesia", "English" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Simpan");
 
@@ -253,6 +265,10 @@ public class Settings extends javax.swing.JPanel {
         ap.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         ap.setVisible(true);
     }//GEN-LAST:event_jToggleButton2ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
