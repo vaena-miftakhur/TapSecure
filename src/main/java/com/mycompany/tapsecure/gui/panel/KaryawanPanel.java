@@ -8,21 +8,25 @@ import com.mycompany.tapsecure.objects.Karyawan;
 import com.mycompany.tapsecure.services.KaryawanService;
 import com.mycompany.tapsecure.util.EncryptionUtils;
 import com.mycompany.tapsecure.util.SecurityUtils;
-
+import com.mycompany.tapsecure.services.I18nService;
 /**
  *
  * @author vaena
  */
 public class KaryawanPanel extends javax.swing.JPanel {
 
-    /**
-     * Creates new form KaryawanPanel
-     */
+    public static String uidLama = "";
+    
     public KaryawanPanel() {
         initComponents();
-     txtCari.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 40, 
+        
+        txtCari.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 40, 
         new javax.swing.ImageIcon(getClass().getResource("/images/search-icon-32.png"))));
-    showData("");
+        
+        applyLanguage();
+        I18nService.registerListener(() -> applyLanguage());
+        
+        showData("");
     }
 
     /**
@@ -72,6 +76,12 @@ public class KaryawanPanel extends javax.swing.JPanel {
         jLabel1.setText("UID");
 
         jLabel2.setText("ID Karyawan");
+
+        txtUID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUIDActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Nama Karyawan");
 
@@ -230,31 +240,60 @@ public class KaryawanPanel extends javax.swing.JPanel {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         Karyawan karyawan = new Karyawan();
-        
-        // Enkripsi 1 Arah (SHA-256) untuk UID RFID
-        karyawan.setUidRfid(SecurityUtils.getHash(txtUID.getText().trim(), SecurityUtils.SHA_256));
-        
-        // Enkripsi 2 Arah (AES) -> Diacak menggunakan Kunci Rahasia VM Options Anda
-        karyawan.setIdKaryawan(EncryptionUtils.encrypt(txtKRID.getText().trim()));
-        
-        karyawan.setNamaLengkap(txtKRName.getText().trim());
-        karyawan.setDepartemen(txtKRDept.getSelectedItem().toString());
 
+        // SHA-256 (Enkripsi 1 arah)
+        karyawan.setUidRfid(
+                SecurityUtils.getHash(
+                        txtUID.getText().trim(),
+                        SecurityUtils.SHA_256
+                )
+        );
+
+        // AES (Enkripsi 2 arah)
+        karyawan.setIdKaryawan(
+                EncryptionUtils.encrypt(
+                        txtKRID.getText().trim()
+                )
+        );
+
+        karyawan.setNamaLengkap(txtKRName.getText().trim());
+        karyawan.setDepartemen(DEPT_KEYS[txtKRDept.getSelectedIndex()]);
         new KaryawanService().tambahKaryawan(karyawan);
+
         refresAll();
         showData("");
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Karyawan karyawan = new Karyawan();
-        karyawan.setUidRfid(SecurityUtils.getHash(txtUID.getText().trim(), SecurityUtils.SHA_256));
-        karyawan.setIdKaryawan(EncryptionUtils.encrypt(txtKRID.getText().trim()));
-        karyawan.setNamaLengkap(txtKRName.getText().trim());
-        karyawan.setDepartemen(txtKRDept.getSelectedItem().toString());
 
+        Karyawan karyawan = new Karyawan();
+
+        // Jika tidak scan kartu baru, gunakan UID lama
+        if (txtUID.getText().trim().isEmpty()) {
+            karyawan.setUidRfid(uidLama);
+        } else {
+            karyawan.setUidRfid(
+                    SecurityUtils.getHash(
+                            txtUID.getText().trim(),
+                            SecurityUtils.SHA_256
+                    )
+            );
+        }
+
+        // AES
+        karyawan.setIdKaryawan(
+                EncryptionUtils.encrypt(
+                        txtKRID.getText().trim()
+                )
+        );
+
+        karyawan.setNamaLengkap(txtKRName.getText().trim());
+        karyawan.setDepartemen(DEPT_KEYS[txtKRDept.getSelectedIndex()]);
         new KaryawanService().updateKaryawan(karyawan);
+
         refresAll();
         showData("");
+
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
@@ -269,6 +308,10 @@ public class KaryawanPanel extends javax.swing.JPanel {
     private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCariActionPerformed
+
+    private void txtUIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUIDActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -297,12 +340,60 @@ public class KaryawanPanel extends javax.swing.JPanel {
 
     private void refresAll() {
         showData("");
+
+        uidLama = "";
+
         txtUID.setText("");
         txtKRID.setText("");
         txtKRName.setText("");
-        txtKRDept.setSelectedIndex(0); 
-        btnUpdate.setEnabled(false); 
+        txtKRDept.setSelectedIndex(0);
+
+        btnUpdate.setEnabled(false);
+        btnSave.setEnabled(true);
+
+        txtKRID.setEnabled(true);
+
         txtUID.requestFocus();
     }
+    
+    private void loadDepartmentCombo() {
+
+        int selected = txtKRDept.getSelectedIndex();
+
+        txtKRDept.removeAllItems();
+
+        txtKRDept.addItem(I18nService.get("dept.hrd"));
+        txtKRDept.addItem(I18nService.get("dept.finance"));
+        txtKRDept.addItem(I18nService.get("dept.marketing"));
+        txtKRDept.addItem(I18nService.get("dept.sales"));
+        txtKRDept.addItem(I18nService.get("dept.operation"));
+        txtKRDept.addItem(I18nService.get("dept.it"));
+        txtKRDept.addItem(I18nService.get("dept.ga"));
+
+        if (selected >= 0 && selected < txtKRDept.getItemCount()) {
+            txtKRDept.setSelectedIndex(selected);
+        }
+    }
+    
+    private void applyLanguage() {
+
+        jLabel1.setText(I18nService.get("ui.emp.uid"));
+        jLabel2.setText(I18nService.get("ui.emp.id"));
+        jLabel3.setText(I18nService.get("ui.emp.name"));
+        jLabel4.setText(I18nService.get("ui.emp.dept"));
+
+        btnSave.setText(I18nService.get("ui.btn.save"));
+        btnUpdate.setText(I18nService.get("ui.btn.update"));
+        btnRefresh.setText(I18nService.get("ui.btn.refresh"));
+
+        loadDepartmentCombo();
+        // refresh card
+        showData(txtCari.getText().trim());
+    }
+    
+    private static final String[] DEPT_KEYS = {
+        "dept.hrd", "dept.finance", "dept.marketing",
+        "dept.sales", "dept.operation", "dept.it", "dept.ga"
+    };
 
 }

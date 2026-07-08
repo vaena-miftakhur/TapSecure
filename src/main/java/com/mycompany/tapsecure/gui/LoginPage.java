@@ -7,7 +7,7 @@ package com.mycompany.tapsecure.gui;
 import com.mycompany.tapsecure.services.AuthService;
 import java.awt.Frame;
 import javax.swing.JOptionPane;
-
+import com.mycompany.tapsecure.services.I18nService;
 /**
  *
  * @author vaena
@@ -21,6 +21,9 @@ public class LoginPage extends javax.swing.JFrame {
      */
     public LoginPage() {
         initComponents();
+        
+        applyLanguage();
+        I18nService.registerListener(() -> applyLanguage());
         
         // Panggil fungsi skala logo saat frame pertama kali di-render secara penuh
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -227,7 +230,10 @@ public class LoginPage extends javax.swing.JFrame {
 
             // Validasi input kosong langsung dengan teks Indonesia
             if (username.isEmpty() || passwordPlain.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username dan Password tidak boleh kosong!");
+                JOptionPane.showMessageDialog(
+                    this,
+                    I18nService.get("ui.login.empty")
+);
                 return;
             }
 
@@ -239,6 +245,11 @@ public class LoginPage extends javax.swing.JFrame {
             authService.login(username, passwordPlain, this);
         }
 
+        private void applyLanguage() {
 
+            jLabel1.setText(I18nService.get("ui.login.username"));
+            jLabel2.setText(I18nService.get("ui.login.password"));
+            btnMasuk.setText(I18nService.get("ui.login.go"));
 
+        }
 }

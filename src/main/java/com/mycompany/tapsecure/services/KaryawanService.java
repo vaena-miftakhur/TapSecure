@@ -22,6 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.bson.conversions.Bson;
+import com.mycompany.tapsecure.services.I18nService;
+import com.mycompany.tapsecure.util.EncryptionUtils;
+
 
 /**
  *
@@ -111,44 +114,80 @@ public class KaryawanService {
                 ));
 
                 // Membuat Label Nama & Set warna teks jadi Putih
-                JLabel lblNama = new JLabel("Nama: " + k.getNamaLengkap());
+                JLabel lblNama = new JLabel(
+                    I18nService.get("ui.emp.name") + ": " + k.getNamaLengkap());
                 lblNama.setForeground(Color.WHITE);
 
                 // Membuat Label ID Karyawan & Set warna teks jadi Putih
                 //  KODE YANG BENAR (Didekripsi dulu sebelum tampil di card):
-                JLabel lblIDK = new JLabel("ID Karyawan: " + com.mycompany.tapsecure.util.EncryptionUtils.decrypt(k.getIdKaryawan()));
+                JLabel lblIDK = new JLabel(
+                    I18nService.get("ui.emp.id") + ": "
+                    + EncryptionUtils.decrypt(k.getIdKaryawan()));
                 lblIDK.setForeground(Color.WHITE);
 
                 // Membuat Label Departemen & Set warna teks jadi Putih
-                JLabel lblDept = new JLabel("Departmen: " + k.getDepartemen());
+                JLabel lblDept = new JLabel(
+                    I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
                 lblDept.setForeground(Color.WHITE);
 
                 // Membuat panel kontrol 1 baris 2 kolom, berisi tombol edit dan hapus
                 JPanel controlPanel = new JPanel(new GridLayout(1, 2, 20, 15));
                 controlPanel.setBackground(new Color(0, 0, 255));
 
-                JButton tombolEdit = new JButton("Edit");
+                JButton tombolEdit = new JButton(
+                     I18nService.get("ui.btn.edit"));
                 tombolEdit.setBackground(Color.WHITE);
                 tombolEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 tombolEdit.addActionListener((ActionEvent e) -> {
-                    KaryawanPanel.txtUID.setText(k.getUidRfid());
-                    KaryawanPanel.txtKRID.setText(k.getIdKaryawan());
-                    KaryawanPanel.txtKRID.setEnabled(false); 
-                    KaryawanPanel.txtKRName.setText(k.getNamaLengkap());
-                    KaryawanPanel.txtKRDept.setSelectedItem(k.getDepartemen());
-                    KaryawanPanel.btnUpdate.setEnabled(true);
-                    KaryawanPanel.btnSave.setEnabled(false); 
+
+                // SIMPAN HASH UID LAMA
+                KaryawanPanel.uidLama = k.getUidRfid();
+
+                // Jangan tampilkan hash ke user
+                KaryawanPanel.txtUID.setText("");
+
+                // Tampilkan ID hasil decrypt
+                KaryawanPanel.txtKRID.setText(
+                    com.mycompany.tapsecure.util.EncryptionUtils.decrypt(
+                        k.getIdKaryawan()
+                    )
+                );
+
+                KaryawanPanel.txtKRID.setEnabled(false);
+                KaryawanPanel.txtKRName.setText(k.getNamaLengkap());
+                                String[] deptKeys = {"dept.hrd", "dept.finance", "dept.marketing",
+                                      "dept.sales", "dept.operation", "dept.it", "dept.ga"};
+                int deptIndex = 0;
+                for (int i = 0; i < deptKeys.length; i++) {
+                    if (deptKeys[i].equals(k.getDepartemen())) {
+                        deptIndex = i;
+                        break;
+                    }
+                }
+                KaryawanPanel.txtKRDept.setSelectedIndex(deptIndex);
+
+                KaryawanPanel.btnUpdate.setEnabled(true);
+                KaryawanPanel.btnSave.setEnabled(false);
+
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nService.get("msg.changeCard")
+                );
                 });
-                JButton tombolDelete = new JButton("Delete");
+                JButton tombolDelete = new JButton(
+                     I18nService.get("ui.btn.delete"));
                 tombolDelete.setBackground(Color.WHITE);
                 tombolDelete.setForeground(Color.BLACK);
                 tombolDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 tombolDelete.addActionListener((ActionEvent e) -> {
-                    Object[] options = {"Ya, Hapus", "Batal"};
+                    Object[] options = {
+                        I18nService.get("btn.yesDelete"),
+                        I18nService.get("btn.cancel")
+                    };
                     int choice = JOptionPane.showOptionDialog(
                             null, // Parent component
-                            "Apakah Anda ingin menyimpan data "+k.getNamaLengkap()+"?", // Message
-                            "Konfirmasi Pengelolaan", // Title
+                            I18nService.get("msg.deleteConfirm") + " " + k.getNamaLengkap() + "?", // Message
+                            I18nService.get("title.confirm"), // Title
                             JOptionPane.YES_NO_OPTION, // Option type
                             JOptionPane.QUESTION_MESSAGE, // Message type
                             null, // Custom icon (null uses default)
@@ -184,6 +223,7 @@ public class KaryawanService {
             panelTarget.revalidate();
             panelTarget.repaint();
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.toString());
         }
     }
 
@@ -219,9 +259,10 @@ public class KaryawanService {
     public void hapusKaryawan(String idKaryawan) {
         try {
             DAO.delete(Filters.eq("idKaryawan", idKaryawan));
-            JOptionPane.showMessageDialog(null, "Data karyawan berhasil dihapus.");
+            JOptionPane.showMessageDialog(null, I18nService.get("msg.deleteSuccess"));
+            KaryawanPanel.showData(""); // ← tambahkan ini, refresh tampilan card
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Gagal menghapus data: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, I18nService.get("msg.deleteFailed") + e.getMessage());
         }
     }
 

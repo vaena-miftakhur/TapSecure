@@ -7,6 +7,7 @@ package com.mycompany.tapsecure.gui;
 import com.mycompany.tapsecure.gui.panel.Settings;
 import com.mycompany.tapsecure.objects.Karyawan;
 import com.mycompany.tapsecure.services.DigitalClockService;
+import com.mycompany.tapsecure.services.I18nService;
 import com.mycompany.tapsecure.services.KaryawanService;
 import com.mycompany.tapsecure.services.LogAbsensiService;
 import com.mycompany.tapsecure.services.SerialService;
@@ -74,11 +75,11 @@ public class AttendancePage extends javax.swing.JFrame {
                             String decryptedID = EncryptionUtils.decrypt(k.getIdKaryawan());
                             jLabel4.setText("ID Karyawan: " + decryptedID);
                             
-                            jLabel5.setText("Departemen: " + k.getDepartemen());
-                            updateLabelWithDelay(jLabel7, "Absensi diterima. Terimakasih");
-                        } else {
-                            updateLabelWithDelay(jLabel7, "Kartu Tidak Terdaftar!");
-                        }
+                            jLabel5.setText(I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
+                            updateLabelWithDelay(jLabel7, I18nService.get("ui.status.success"));
+                            } else {
+                                updateLabelWithDelay(jLabel7, I18nService.get("ui.status.failed"));
+                            }
                         jTextField1.setText("");
                     }
                 }
@@ -97,7 +98,8 @@ public class AttendancePage extends javax.swing.JFrame {
         jPanel3.add(jPanel4, new java.awt.GridBagConstraints());
 
         initClock(jLabel1);
-        jLabel7.setText(Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
+        String statusCode = Settings.prefs.get("LAST_STATUS", Settings.statusAbsen);
+        jLabel7.setText("IN".equals(statusCode) ? I18nService.get("ui.status.in") : I18nService.get("ui.status.out"));
         updateLabelWithDelay(jLabel7, "");
         setupAttendanceWorkflow();
         
@@ -370,11 +372,11 @@ public class AttendancePage extends javax.swing.JFrame {
                     if (k != null) {
                         jLabel3.setText("Nama Lengkap: " + k.getNamaLengkap() + "");
                         jLabel4.setText("ID Karyawan: " + k.getIdKaryawan());
-                        jLabel5.setText("Departemen: " + k.getDepartemen());
-                        updateLabelWithDelay(jLabel7, "Absensi diterima. Terimakasih");
+                        jLabel5.setText(I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
+                        updateLabelWithDelay(jLabel7, I18nService.get("ui.status.success"));
                     }
                 } else {
-                    updateLabelWithDelay(jLabel7, "Kartu Tidak Terdaftar!");
+                    updateLabelWithDelay(jLabel7, I18nService.get("ui.status.failed"));
                 }
             });
         });
@@ -392,8 +394,10 @@ public class AttendancePage extends javax.swing.JFrame {
                     Thread.sleep(1000);
                 }
                 
-                SwingUtilities.invokeLater(() -> comp.setText(Settings.prefs.get("LAST_STATUS", Settings.statusAbsen)));
-
+                SwingUtilities.invokeLater(() -> {
+                    String statusCode = Settings.prefs.get("LAST_STATUS", Settings.statusAbsen);
+                    comp.setText("IN".equals(statusCode) ? I18nService.get("ui.status.in") : I18nService.get("ui.status.out"));
+                });
             } catch (InterruptedException e) {
                 // Penanganan jika thread dihentikan paksa (Interrupted)
             }
@@ -425,10 +429,10 @@ public class AttendancePage extends javax.swing.JFrame {
                     String decryptedID = EncryptionUtils.decrypt(k.getIdKaryawan());
                     jLabel4.setText("ID Karyawan: " + decryptedID);
                     
-                    jLabel5.setText("Departemen: " + k.getDepartemen());
-                    updateLabelWithDelay(jLabel7, "Absensi diterima. Terimakasih");
+                    jLabel5.setText(I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
+                    updateLabelWithDelay(jLabel7, I18nService.get("ui.status.success"));
                 } else {
-                    updateLabelWithDelay(jLabel7, "Kartu Tidak Terdaftar!");
+                    updateLabelWithDelay(jLabel7, I18nService.get("ui.status.failed"));
                 }
             }
         });

@@ -4,20 +4,31 @@
  */
 package com.mycompany.tapsecure.gui.panel;
 
+import com.mycompany.tapsecure.objects.Karyawan;
+import com.mycompany.tapsecure.objects.LogAbsensi;
+import com.mycompany.tapsecure.services.I18nService;
+import com.mycompany.tapsecure.services.KaryawanService;
+import com.mycompany.tapsecure.services.LogAbsensiService;
+import com.mycompany.tapsecure.util.EncryptionUtils;
+import java.io.File;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Muhammad Satria, vaena
  */
 public class Reports extends javax.swing.JPanel {
+    private final I18nService.I18nChangeListener languageListener = this::applyLanguage;
 
     /**
      * Creates new form Reports
      */
     public Reports() {
         initComponents();
-
+        
+        applyLanguage();
+        I18nService.registerListener(languageListener);
         // Set layout utama
         this.setLayout(new java.awt.BorderLayout());
 
@@ -33,18 +44,18 @@ public class Reports extends javax.swing.JPanel {
 
         this.add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { 
-            "Semua Bulan", "Januari", "Februari", "Maret", "April", "Mei ", "Juni ", 
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember" 
-        }));
-        jComboBox1.setSelectedIndex(0);
         showReportData();
     }
     
     public void showReportData() {
         javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
             new Object[][]{}, 
-            new String[]{"Id", "Nama Karyawan", "Departemen", "Status Absensi"}
+            new String[]{
+                I18nService.get("report.id"),
+                I18nService.get("report.employee"),
+                I18nService.get("report.department"),
+                I18nService.get("report.status")
+            }
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -55,18 +66,18 @@ public class Reports extends javax.swing.JPanel {
         jTable1.setModel(model);
 
         String bulanDipilih = jComboBox1.getSelectedItem().toString().trim();
+        
+        LogAbsensiService logService = new LogAbsensiService();
+        KaryawanService karyawanService = new KaryawanService();
 
-        com.mycompany.tapsecure.services.LogAbsensiService logService = new com.mycompany.tapsecure.services.LogAbsensiService();
-        com.mycompany.tapsecure.services.KaryawanService karyawanService = new com.mycompany.tapsecure.services.KaryawanService();
-
-        java.util.List<com.mycompany.tapsecure.objects.LogAbsensi> listLog = logService.getAllLog();
-
+        List<LogAbsensi> listLog = logService.getAllLog();
+        
         if (listLog == null || listLog.isEmpty()) return;
 
         for (com.mycompany.tapsecure.objects.LogAbsensi log : listLog) {
             
             // 💡 STRATEGI PENYARINGAN AMAN BERDASARKAN TEKS COMBOBOX
-            if (!bulanDipilih.equalsIgnoreCase("Semua Bulan")) {
+            if (!bulanDipilih.equalsIgnoreCase(I18nService.get("report.allMonth"))) {
                 int bulanLog = 0;
                 
                 if (log.getWaktuTap() != null) {
@@ -95,30 +106,30 @@ public class Reports extends javax.swing.JPanel {
                 }
                 
                 // Konversi angka bulan (1-12) menjadi teks nama bulan Bahasa Indonesia
-                String namaBulanLog = "";
-                switch (bulanLog) {
-                    case 1 -> namaBulanLog = "Januari";
-                    case 2 -> namaBulanLog = "Februari";
-                    case 3 -> namaBulanLog = "Maret";
-                    case 4 -> namaBulanLog = "April";
-                    case 5 -> namaBulanLog = "Mei";
-                    case 6 -> namaBulanLog = "Juni";
-                    case 7 -> namaBulanLog = "Juli";
-                    case 8 -> namaBulanLog = "Agustus";
-                    case 9 -> namaBulanLog = "September";
-                    case 10 -> namaBulanLog = "Oktober";
-                    case 11 -> namaBulanLog = "November";
-                    case 12 -> namaBulanLog = "Desember";
-                }
+                String namaBulanLog = switch (bulanLog) {
+                    case 1 -> I18nService.get("month.january");
+                    case 2 -> I18nService.get("month.february");
+                    case 3 -> I18nService.get("month.march");
+                    case 4 -> I18nService.get("month.april");
+                    case 5 -> I18nService.get("month.may");
+                    case 6 -> I18nService.get("month.june");
+                    case 7 -> I18nService.get("month.july");
+                    case 8 -> I18nService.get("month.august");
+                    case 9 -> I18nService.get("month.september");
+                    case 10 -> I18nService.get("month.october");
+                    case 11 -> I18nService.get("month.november");
+                    case 12 -> I18nService.get("month.december");
+                    default -> "";
+                };
                 
                 // Jika nama bulannya tidak cocok dengan pilihan di ComboBox, lewati baris data ini
                 if (!namaBulanLog.equalsIgnoreCase(bulanDipilih)) {
                     continue; 
                 }
             }
-            // 🌟 JIKA "Semua Bulan" terpilih, penyaringan di atas dilewati total, seluruh data langsung lolos!
+            // JIKA "Semua Bulan" terpilih, penyaringan di atas dilewati total, seluruh data langsung lolos!
 
-            String idTampil = "Tidak Terdaftar";
+            String idTampil = I18nService.get("report.notRegistered");
             String namaTampil = "-";
             String deptTampil = "-";
 
@@ -127,11 +138,11 @@ public class Reports extends javax.swing.JPanel {
             if (karyawan != null) {
                 idTampil = com.mycompany.tapsecure.util.EncryptionUtils.decrypt(karyawan.getIdKaryawan());
                 namaTampil = karyawan.getNamaLengkap();
-                deptTampil = karyawan.getDepartemen();
+                deptTampil = I18nService.get(karyawan.getDepartemen());   // ✅ translate key
             } else {
                 if (log.getUidRfid() != null) {
                     String shortUid = log.getUidRfid().length() > 8 ? log.getUidRfid().substring(0, 8) : log.getUidRfid();
-                    idTampil = "UID: " + shortUid;
+                    idTampil = I18nService.get("log.uid") + ": " + shortUid;
                 }
             }
 
@@ -148,11 +159,15 @@ public class Reports extends javax.swing.JPanel {
                 } catch(Exception ex) {}
             }
 
+            String statusTampil = "IN".equals(log.getStatus())
+                    ? I18nService.get("ui.status.in")
+                    : I18nService.get("ui.status.out");
+
             model.addRow(new Object[]{
                 idTampil,
                 namaTampil,
                 deptTampil,
-                log.getStatus()
+                statusTampil   // ✅ sudah ditranslate
             });
         }
     }
@@ -254,8 +269,8 @@ public class Reports extends javax.swing.JPanel {
         String bulanIni = jComboBox1.getSelectedItem().toString().trim();
         
         javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
-        fileChooser.setDialogTitle("Simpan Laporan Bulanan");
-        fileChooser.setSelectedFile(new java.io.File("Laporan_Absensi_" + bulanIni + ".csv"));
+        fileChooser.setDialogTitle(I18nService.get("report.save"));
+        fileChooser.setSelectedFile(new File(I18nService.get("report.filename") + "_" + bulanIni + ".csv"));
 
         int userSelection = fileChooser.showSaveDialog(this);
 
@@ -266,8 +281,12 @@ public class Reports extends javax.swing.JPanel {
                 javax.swing.table.TableModel tableModel = jTable1.getModel();
                 
                 // 💡 MENGGUNAKAN TITIK KOMA (;) Agar Excel otomatis memisahkan kolom dengan rapi
-                fw.write("ID Karyawan;Nama Karyawan;Departemen;Status Absensi\n");
-                
+                fw.write(
+                    I18nService.get("report.id") + ";" +
+                    I18nService.get("report.employee") + ";" +
+                    I18nService.get("report.department") + ";" +
+                    I18nService.get("report.status") + "\n"
+                );
                 for (int i = 0; i < tableModel.getRowCount(); i++) {
                     String id = tableModel.getValueAt(i, 0).toString();
                     String nama = tableModel.getValueAt(i, 1).toString();
@@ -278,14 +297,48 @@ public class Reports extends javax.swing.JPanel {
                     fw.write(id + ";" + nama + ";" + dept + ";" + status + "\n");
                 }
                 
-                javax.swing.JOptionPane.showMessageDialog(this, "Laporan " + bulanIni + " Berhasil Dieksport ke: \n" + fileToSave.getAbsolutePath());
-                
+                javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("report.exportSuccess")
+                    + " " + bulanIni
+                    + "\n"
+                    + fileToSave.getAbsolutePath());
+
             } catch (Exception e) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Gagal mengeksport data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("report.exportFailed") + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void applyLanguage() {
+
+        jButton1.setText(I18nService.get("report.export"));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{
+            I18nService.get("report.allMonth"),
+            I18nService.get("month.january"),
+            I18nService.get("month.february"),
+            I18nService.get("month.march"),
+            I18nService.get("month.april"),
+            I18nService.get("month.may"),
+            I18nService.get("month.june"),
+            I18nService.get("month.july"),
+            I18nService.get("month.august"),
+            I18nService.get("month.september"),
+            I18nService.get("month.october"),
+            I18nService.get("month.november"),
+            I18nService.get("month.december")
+        }));
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+        model.setColumnIdentifiers(new Object[]{
+            I18nService.get("report.id"),
+            I18nService.get("report.employee"),
+            I18nService.get("report.department"),
+            I18nService.get("report.status")
+        });
+
+        showReportData();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -295,4 +348,10 @@ public class Reports extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+    @Override
+    public void removeNotify() {
+        I18nService.unregisterListener(languageListener);
+        super.removeNotify();
+    }
+
 }

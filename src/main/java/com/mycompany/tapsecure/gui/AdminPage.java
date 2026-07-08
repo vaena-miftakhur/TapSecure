@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import com.mycompany.tapsecure.gui.panel.KaryawanPanel;
 import com.mycompany.tapsecure.gui.panel.Settings;
 import com.mycompany.tapsecure.gui.panel.Reports;
+import com.mycompany.tapsecure.gui.panel.DashboardPanel;
+import com.mycompany.tapsecure.gui.panel.LogAbsensiPanel;
 
 
 
@@ -27,6 +29,8 @@ public class AdminPage extends javax.swing.JFrame {
     public AdminPage() {
         initComponents();
         appContentPane.remove(jPanel3);
+
+        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         
         jPanel2.add(jButton5, java.awt.BorderLayout.SOUTH);
 
@@ -52,14 +56,16 @@ public class AdminPage extends javax.swing.JFrame {
 
         appContentPane.setLayout(new java.awt.BorderLayout(0, 0));
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        
+        addContent(new DashboardPanel());
+        
         this.revalidate();
         this.repaint();
     }
     
     private void applyLanguage() {
-        System.out.println("Current locale: " + com.mycompany.tapsecure.services.I18nService.getCurrentLocale());
-    System.out.println("employee key: " + com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.employee"));
-    
+
+        jButton6.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.dashboard"));
         jButton1.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.employee"));
         jButton2.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.attendance"));
         jButton3.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.settings"));
@@ -84,6 +90,7 @@ public class AdminPage extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -132,23 +139,34 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
 
+        jButton6.setBackground(new java.awt.Color(51, 51, 255));
+        jButton6.setText("Dasbor");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(24, 24, 24)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -156,7 +174,7 @@ public class AdminPage extends javax.swing.JFrame {
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(245, Short.MAX_VALUE))
+                .addContainerGap(200, Short.MAX_VALUE))
         );
 
         jLabel1.setText("jLabel1");
@@ -240,20 +258,7 @@ public class AdminPage extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        // 1. Bersihkan isi appContentPane dari panel sebelumnya
-        appContentPane.removeAll();
-
-        // 2. Buat objek panel dengan nama kelas baru: LogAbsensiPanel
-        com.mycompany.tapsecure.gui.panel.LogAbsensiPanel logPanel = new com.mycompany.tapsecure.gui.panel.LogAbsensiPanel();
-
-        // 3. Masukkan LogAbsensiPanel ke bagian tengah layout AdminPage
-        appContentPane.add(logPanel, java.awt.BorderLayout.CENTER);
-
-        // 4. Render ulang komponen layar agar langsung berubah di samping sidebar
-        appContentPane.revalidate();
-        appContentPane.repaint();
-      
+        addContent(new LogAbsensiPanel());
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -262,30 +267,18 @@ public class AdminPage extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-         // 1. Bersihkan kontainer kanan dari panel sebelumnya
-        appContentPane.removeAll();
-        
-        // 3. Buat objek panel Reports (Sudah memanggil import di baris atas berkas Anda)
-        Reports reportPanel = new Reports();
-        
-
-        // 4. Masukkan dengan parameter CENTER agar panel laporan melar full layar di konten AdminPage
-        appContentPane.add(reportPanel, java.awt.BorderLayout.CENTER);
-        
-        // 5. Refresh grafis layar
-        appContentPane.revalidate();
-        appContentPane.repaint();
+        addContent(new Reports());
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         // 1. Tampilkan dialog konfirmasi biar lebih profesional di depan dosen
         int opsi = javax.swing.JOptionPane.showConfirmDialog(
-                this, 
-                "Apakah Anda yakin ingin keluar ke halaman login?", 
-                "Konfirmasi Logout", 
-                javax.swing.JOptionPane.YES_NO_OPTION,
-                javax.swing.JOptionPane.QUESTION_MESSAGE
+            this,
+            com.mycompany.tapsecure.services.I18nService.get("ui.logout.message"),
+            com.mycompany.tapsecure.services.I18nService.get("ui.logout.title"),
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.QUESTION_MESSAGE
         );
         
         if (opsi == javax.swing.JOptionPane.YES_OPTION) {
@@ -297,6 +290,11 @@ public class AdminPage extends javax.swing.JFrame {
             new LoginPage().setVisible(true);
         }
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        addContent(new DashboardPanel());
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -339,6 +337,7 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

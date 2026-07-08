@@ -13,6 +13,7 @@ import com.mongodb.client.model.Filters;
 import java.awt.Frame;
 import javax.swing.JOptionPane;
 import java.time.LocalDateTime;
+import com.mycompany.tapsecure.services.I18nService;
 
 /**
  *
@@ -47,7 +48,10 @@ public class AuthService {
             userDAO.update(Filters.eq("username", username), user);
 
             // Berhasil: Masuk ke Halaman Admin
-            JOptionPane.showMessageDialog(null, "Selamat Datang, " + user.getFullname());
+            JOptionPane.showMessageDialog(
+                null,
+                I18nService.get("ui.login.success") + ", " + user.getFullname()
+            );
             AdminPage admPage = new AdminPage();
             admPage.setLocationRelativeTo(null); 
             admPage.setVisible(true);
@@ -55,10 +59,11 @@ public class AuthService {
             loginPage.setVisible(false); 
         } else {
             // Gagal: Notifikasi Error
-            JOptionPane.showMessageDialog(null,
-                    "Username atau Password Salah!",
-                    "Login Gagal",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                null,
+                I18nService.get("ui.login.failed"),
+                I18nService.get("ui.login.failed.title"),
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -83,7 +88,9 @@ public class AuthService {
             userDAO.save(newUser); // Memanggil insertOne melalui GenericDAO [5]
         } catch (Exception e) {
             // Standar Debugging: Mengidentifikasi error log secara mandiri [6]
-            JOptionPane.showMessageDialog(null, "Gagal mendaftarkan user: " + e.getMessage());
+            JOptionPane.showMessageDialog(
+                null,
+                I18nService.get("ui.register.failed") + " " + e.getMessage());
         }
     }
 }

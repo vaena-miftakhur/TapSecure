@@ -5,10 +5,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
+import javax.swing.UIManager;
+
 
 public class I18nService {
     private static ResourceBundle bundle;
     private static Locale currentLocale;
+    
+    private static final Preferences PREF =
+        Preferences.userRoot().node("TapSecure");
     
     public interface I18nChangeListener {
         void onLanguageChanged();
@@ -16,9 +22,11 @@ public class I18nService {
     
     private static final List<I18nChangeListener> listeners = new ArrayList<>();
     
-    static {
-        currentLocale = new Locale("id");
+        static {
+        String language = PREF.get("language", "id"); // default Indonesia
+        currentLocale = new Locale(language);
         loadBundle();
+        updateOptionPaneLanguage();
     }
     
     private static void loadBundle() {
@@ -47,8 +55,16 @@ public class I18nService {
     }
     
     public static void setLocale(Locale locale) {
+
         currentLocale = locale;
+
+        // Simpan bahasa yang dipilih
+        PREF.put("language", locale.getLanguage());
+
         loadBundle();
+        
+        updateOptionPaneLanguage();
+
         notifyListeners();
     }
     
@@ -80,6 +96,35 @@ public class I18nService {
             if (listener != null) {
                 listener.onLanguageChanged();
             }
+        }
+    }
+    
+    private static void updateOptionPaneLanguage() {
+
+        String lang = currentLocale.getLanguage();
+
+        switch (lang) {
+
+            case "id":
+                UIManager.put("OptionPane.yesButtonText", "Ya");
+                UIManager.put("OptionPane.noButtonText", "Tidak");
+                UIManager.put("OptionPane.cancelButtonText", "Batal");
+                UIManager.put("OptionPane.okButtonText", "OK");
+                break;
+
+            case "en":
+                UIManager.put("OptionPane.yesButtonText", "Yes");
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.cancelButtonText", "Cancel");
+                UIManager.put("OptionPane.okButtonText", "OK");
+                break;
+
+            case "nl":
+                UIManager.put("OptionPane.yesButtonText", "Ja");
+                UIManager.put("OptionPane.noButtonText", "Nee");
+                UIManager.put("OptionPane.cancelButtonText", "Annuleren");
+                UIManager.put("OptionPane.okButtonText", "OK");
+                break;
         }
     }
 }

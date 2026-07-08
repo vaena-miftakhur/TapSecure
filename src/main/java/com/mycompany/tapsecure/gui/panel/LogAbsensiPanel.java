@@ -11,10 +11,11 @@ import com.mycompany.tapsecure.objects.Karyawan;
 import com.mycompany.tapsecure.util.EncryptionUtils;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import com.mycompany.tapsecure.services.I18nService;
 
 /**
  *
- * @author satriya, vaena
+ * @author satria, vaena
  */
 public class LogAbsensiPanel extends javax.swing.JPanel {
 
@@ -24,71 +25,63 @@ public class LogAbsensiPanel extends javax.swing.JPanel {
     public LogAbsensiPanel() {
         initComponents();
         
+        applyLanguage();
+        I18nService.registerListener(() -> applyLanguage());
+        
         showData();
     }
     
-        private void showData() {
-        // 1. AMBIL MODEL BAWAAN ASLI dari design NetBeans Anda yang ada di gambar (Id, Status, Waktu)
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-        
-        // 2. Kosongkan baris lamanya saja
+    private void showData() {
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        
-        com.mycompany.tapsecure.services.LogAbsensiService service = new com.mycompany.tapsecure.services.LogAbsensiService();
-        com.mycompany.tapsecure.services.KaryawanService karyawanService = new com.mycompany.tapsecure.services.KaryawanService();
-        
-        // 3. Ambil data log absensi dari MongoDB
-        java.util.List<com.mycompany.tapsecure.objects.LogAbsensi> listLog = service.getAllLog(); 
-        
+
+        LogAbsensiService service = new LogAbsensiService();
+        KaryawanService karyawanService = new KaryawanService();
+
+        List<LogAbsensi> listLog = service.getAllLog();
+
         if (listLog == null || listLog.isEmpty()) {
             return;
         }
 
-        // 4. Jalankan perulangan baris data
-        for (com.mycompany.tapsecure.objects.LogAbsensi log : listLog) {
-            
-            // Set teks default awal agar kolom "Id" (Kolom pertama design Anda) wajib terisi teks
-            String idTampil = "Kartu Anonim"; 
-            
-            String hashedUidDariLog = log.getUidRfid();
-            
-            if (hashedUidDariLog != null && !hashedUidDariLog.isEmpty()) {
-                // Cari data master karyawan menggunakan hash UID utuh ke database
-                com.mycompany.tapsecure.objects.Karyawan karyawan = karyawanService.findByUid(hashedUidDariLog);
-                
+        for (LogAbsensi log : listLog) {
+
+            String idTampil = I18nService.get("log.anonymous");
+
+            String hashedUid = log.getUidRfid();
+
+            if (hashedUid != null && !hashedUid.isEmpty()) {
+
+                Karyawan karyawan = karyawanService.findByUid(hashedUid);
+
                 if (karyawan != null) {
-                    // 💡 PROSES DEKRIPSI 2 ARAH (AES)
-                    // Jika data karyawan ditemukan, dekripsi ID aslinya untuk masuk kolom "Id"
-                    idTampil = com.mycompany.tapsecure.util.EncryptionUtils.decrypt(karyawan.getIdKaryawan());
+                    idTampil = EncryptionUtils.decrypt(karyawan.getIdKaryawan());
                 } else {
-                    // Trik Fallback Sidang: Jika data karyawan null, paksa potong 8 huruf awal UID-nya agar kolom "Id" tidak melompong
-                    String shortUid = hashedUidDariLog.length() > 8 ? hashedUidDariLog.substring(0, 8) : hashedUidDariLog;
-                    idTampil = "UID: " + shortUid;
+                    String shortUid = hashedUid.length() > 8
+                            ? hashedUid.substring(0, 8)
+                            : hashedUid;
+
+                    idTampil = I18nService.get("log.uid") + ": " + shortUid;
                 }
             }
-            
-            String waktuTampil = log.getWaktuTap() != null ? log.getWaktuTap().toString() : "-";
-            
-            // 5. Masukkan data berurutan sesuai kolom di gambar design Anda (Kolom 0: Id, Kolom 1: Status, Kolom 2: Waktu)
+
+            String waktu = log.getWaktuTap() != null
+                    ? log.getWaktuTap().toString()
+                    : "-";
+
+            String statusCode = log.getStatus();
+            String statusTampil = "IN".equals(statusCode)
+                    ? I18nService.get("ui.status.in")
+                    : I18nService.get("ui.status.out");
+
             model.addRow(new Object[]{
-                idTampil, 
-                log.getStatus(), 
-                waktuTampil
+                idTampil,
+                statusTampil,
+                waktu
             });
         }
     }
-
-
-
-   
-
-
-
-    
-        
-    
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -153,4 +146,18 @@ public class LogAbsensiPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    private void applyLanguage() {
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+        model.setColumnIdentifiers(new Object[]{
+            I18nService.get("log.id"),
+            I18nService.get("log.status"),
+            I18nService.get("log.time")
+        });
+
+        showData();
+    }
+
 }

@@ -27,19 +27,21 @@ public class Settings extends javax.swing.JPanel {
      */
     public Settings() {
         initComponents();
+        applyLanguage();
+        I18nService.registerListener(() -> applyLanguage());
         
         // Set pilihan sesuai bahasa aktif saat ini
         String currentLang = I18nService.getCurrentLocale().getLanguage();
         switch (currentLang) {
             case "en" -> jComboBox1.setSelectedItem("English");
-            case "es" -> jComboBox1.setSelectedItem("Spanish");
+            case "nl" -> jComboBox1.setSelectedItem("Belanda");
             default -> jComboBox1.setSelectedItem("Indonesia");
         }
         
-        statusAbsen = prefs.get("LAST_STATUS", "Masuk"); 
+        statusAbsen = prefs.get("LAST_STATUS", "IN");
         
         // Sinkronkan tampilan tombol
-        if ("Pulang".equals(statusAbsen)) {
+        if ("OUT".equals(statusAbsen)) {
             jToggleButton1.setSelected(false);
             jToggleButton2.setSelected(true);
         } else {
@@ -188,7 +190,7 @@ public class Settings extends javax.swing.JPanel {
         jLabel1.setText("Bahasa Sistem");
 
         jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Indonesia", "English", "Spanish" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Indonesia", "English", "Belanda" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -220,8 +222,9 @@ public class Settings extends javax.swing.JPanel {
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(61, 61, 61)
+                .addGap(55, 55, 55)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(jButton1)
@@ -256,24 +259,22 @@ public class Settings extends javax.swing.JPanel {
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         // Simpan status MASUK
-        prefs.put("LAST_STATUS", "Masuk");
-        statusAbsen = "Masuk";
+        prefs.put("LAST_STATUS", "IN");
+        statusAbsen = "IN";
         jToggleButton1.setSelected(true);
         jToggleButton2.setSelected(false);
 
-        // Buka AttendancePage full layar
         AttendancePage ap = new AttendancePage();
         ap.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         ap.setVisible(true);
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
-        prefs.put("LAST_STATUS", "Pulang");
-        statusAbsen = "Pulang";
+        prefs.put("LAST_STATUS", "OUT");
+        statusAbsen = "OUT";
         jToggleButton1.setSelected(false);
         jToggleButton2.setSelected(true);
-        
-        // Buka AttendancePage full layar
+
         AttendancePage ap = new AttendancePage();
         ap.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         ap.setVisible(true);
@@ -288,7 +289,7 @@ public class Settings extends javax.swing.JPanel {
             String selected = jComboBox1.getSelectedItem().toString();
             java.util.Locale locale = switch (selected) {
                 case "English" -> new java.util.Locale("en");
-                case "Spanish" -> new java.util.Locale("es");
+                case "Belanda" -> new java.util.Locale("nl");
                 default -> new java.util.Locale("id");
             };
             I18nService.setLocale(locale);
@@ -312,4 +313,22 @@ public class Settings extends javax.swing.JPanel {
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     // End of variables declaration//GEN-END:variables
+
+    private void applyLanguage() {
+        jToggleButton1.setText(I18nService.get("ui.status.in"));
+        jToggleButton2.setText(I18nService.get("ui.status.out"));
+        jTabbedPane1.setTitleAt(0, I18nService.get("ui.tab.general"));
+        jTabbedPane1.setTitleAt(1, I18nService.get("ui.tab.preferences"));
+        jLabel1.setText(I18nService.get("ui.setting.lang"));
+        jButton1.setText(I18nService.get("ui.btn.save"));
+        
+        if (statusBorder != null) {
+            statusBorder.setTitle(I18nService.get("ui.title.attendanceStatus"));
+            jPanel3.repaint();
+        }
+
+    }
+    
+    private javax.swing.border.TitledBorder statusBorder;
+
 }
