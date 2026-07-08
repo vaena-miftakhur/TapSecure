@@ -33,6 +33,9 @@ public class AttendancePage extends javax.swing.JFrame {
      */
     public AttendancePage() {
         initComponents();
+        applyLanguage();
+        I18nService.registerListener(() -> applyLanguage());
+        
         // 1. Fix label terpotong - perbesar ukuran label
         jLabel3.setPreferredSize(new java.awt.Dimension(250, 20));
         jLabel4.setPreferredSize(new java.awt.Dimension(250, 20));
@@ -69,11 +72,11 @@ public class AttendancePage extends javax.swing.JFrame {
                         Karyawan k = krService.findByUid(hashedUid);
                         logService.simpanLog(hashedUid, Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
                                                 if (k != null) {
-                            jLabel3.setText("Nama Lengkap: " + k.getNamaLengkap());
+                            jLabel3.setText(I18nService.get("ui.label.name") + " " + k.getNamaLengkap());
                             
                             // 💡 PROSES DEKRIPSI 2 ARAH (AES) UNTUK INPUT ENTER MANUAL
                             String decryptedID = EncryptionUtils.decrypt(k.getIdKaryawan());
-                            jLabel4.setText("ID Karyawan: " + decryptedID);
+                            jLabel4.setText(I18nService.get("ui.label.id") + " " + decryptedID);
                             
                             jLabel5.setText(I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
                             updateLabelWithDelay(jLabel7, I18nService.get("ui.status.success"));
@@ -409,32 +412,36 @@ public class AttendancePage extends javax.swing.JFrame {
     }
     
         private void registerHandler() {
-        // Menggunakan pola observer tunggal dari SerialService milik Anda
-        SerialService.getInstance().addHandler(rawData -> {
-            String uid = rawData.trim();
-            if (!uid.isEmpty()) {
-                // 1 Arah (SHA-256) -> UID langsung di-hash untuk dicari ke database master karyawan
-                String hashedUid = SecurityUtils.getHash(uid, SecurityUtils.SHA_256);
-                
-                KaryawanService krService = new KaryawanService();
-                LogAbsensiService logService = new LogAbsensiService();
-                
-                Karyawan k = krService.findByUid(hashedUid);
-                logService.simpanLog(hashedUid, Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
-                
-                if (k != null) {
-                    jLabel3.setText("Nama Lengkap: " + k.getNamaLengkap());
-                    
-                    // 💡 PROSES DEKRIPSI 2 ARAH (AES) UNTUK TEMPEL KARTU OTOMATIS
-                    String decryptedID = EncryptionUtils.decrypt(k.getIdKaryawan());
-                    jLabel4.setText("ID Karyawan: " + decryptedID);
-                    
-                    jLabel5.setText(I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
-                    updateLabelWithDelay(jLabel7, I18nService.get("ui.status.success"));
-                } else {
-                    updateLabelWithDelay(jLabel7, I18nService.get("ui.status.failed"));
+            // Menggunakan pola observer tunggal dari SerialService milik Anda
+            SerialService.getInstance().addHandler(rawData -> {
+                String uid = rawData.trim();
+                if (!uid.isEmpty()) {
+                    // 1 Arah (SHA-256) -> UID langsung di-hash untuk dicari ke database master karyawan
+                    String hashedUid = SecurityUtils.getHash(uid, SecurityUtils.SHA_256);
+
+                    KaryawanService krService = new KaryawanService();
+                    LogAbsensiService logService = new LogAbsensiService();
+
+                    Karyawan k = krService.findByUid(hashedUid);
+                    logService.simpanLog(hashedUid, Settings.prefs.get("LAST_STATUS", Settings.statusAbsen));
+
+                    if (k != null) {
+                        jLabel3.setText(I18nService.get("ui.label.name") + " " + k.getNamaLengkap());
+                        jLabel4.setText(I18nService.get("ui.label.id") + " " + k.getIdKaryawan());
+                        jLabel5.setText(I18nService.get("ui.emp.dept") + ": " + I18nService.get(k.getDepartemen()));
+                        updateLabelWithDelay(jLabel7, I18nService.get("ui.status.success"));
+                    } else {
+                        updateLabelWithDelay(jLabel7, I18nService.get("ui.status.failed"));
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
+        
+        private void applyLanguage() {
+            jLabel2.setText(I18nService.get("ui.label.card"));
+            jLabel3.setText(I18nService.get("ui.label.name"));
+            jLabel4.setText(I18nService.get("ui.label.id"));
+            jLabel5.setText(I18nService.get("ui.emp.dept") + ": ");
+            jLabel6.setText(I18nService.get("ui.label.photo"));
+        }
 }
