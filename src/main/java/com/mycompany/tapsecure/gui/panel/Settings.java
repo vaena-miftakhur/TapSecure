@@ -28,6 +28,14 @@ public class Settings extends javax.swing.JPanel {
     public Settings() {
         initComponents();
         
+        // Set pilihan sesuai bahasa aktif saat ini
+        String currentLang = I18nService.getCurrentLocale().getLanguage();
+        switch (currentLang) {
+            case "en" -> jComboBox1.setSelectedItem("English");
+            case "es" -> jComboBox1.setSelectedItem("Spanish");
+            default -> jComboBox1.setSelectedItem("Indonesia");
+        }
+        
         statusAbsen = prefs.get("LAST_STATUS", "Masuk"); 
         
         // Sinkronkan tampilan tombol
@@ -180,7 +188,7 @@ public class Settings extends javax.swing.JPanel {
         jLabel1.setText("Bahasa Sistem");
 
         jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Indonesia", "English" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Indonesia", "English", "Spanish" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -188,6 +196,11 @@ public class Settings extends javax.swing.JPanel {
         });
 
         jButton1.setText("Simpan");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -269,6 +282,18 @@ public class Settings extends javax.swing.JPanel {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+            String selected = jComboBox1.getSelectedItem().toString();
+            java.util.Locale locale = switch (selected) {
+                case "English" -> new java.util.Locale("en");
+                case "Spanish" -> new java.util.Locale("es");
+                default -> new java.util.Locale("id");
+            };
+            I18nService.setLocale(locale);
+            JOptionPane.showMessageDialog(this, "Bahasa berhasil diubah!");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -27,6 +27,8 @@ public class AdminPage extends javax.swing.JFrame {
     public AdminPage() {
         initComponents();
         appContentPane.remove(jPanel3);
+        
+        jPanel2.add(jButton5, java.awt.BorderLayout.SOUTH);
 
         // Persempit sidebar
         jPanel2.setPreferredSize(new java.awt.Dimension(180, 365));
@@ -36,11 +38,6 @@ public class AdminPage extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(51, 51, 255));
         jButton3.setBackground(new java.awt.Color(51, 51, 255));
         jButton4.setBackground(new java.awt.Color(51, 51, 255));
-        //MASUKKAN SATU BARIS INI DI PALING BAWAH CONSTRUCTOR:
-        jPanel2.add(jButton5, java.awt.BorderLayout.SOUTH);
-
-
-        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 
         jLabel1.setText("");
         jLabel1.setIcon(new javax.swing.ImageIcon(
@@ -48,12 +45,26 @@ public class AdminPage extends javax.swing.JFrame {
                 .getImage().getScaledInstance(155, 60, java.awt.Image.SCALE_SMOOTH)
         ));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    
+
+        // Terapkan i18n
+        applyLanguage();
+        com.mycompany.tapsecure.services.I18nService.registerListener(() -> applyLanguage());
+
         appContentPane.setLayout(new java.awt.BorderLayout(0, 0));
-        
-        // Memastikan frame merender ulang layout terbaru dengan benar
+        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         this.revalidate();
         this.repaint();
+    }
+    
+    private void applyLanguage() {
+        System.out.println("Current locale: " + com.mycompany.tapsecure.services.I18nService.getCurrentLocale());
+    System.out.println("employee key: " + com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.employee"));
+    
+        jButton1.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.employee"));
+        jButton2.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.attendance"));
+        jButton3.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.settings"));
+        jButton4.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.report"));
+        jButton5.setText(com.mycompany.tapsecure.services.I18nService.get("ui.sidebar.logout"));
     }
 
 
@@ -98,7 +109,7 @@ public class AdminPage extends javax.swing.JFrame {
         });
 
         jButton2.setBackground(new java.awt.Color(51, 51, 255));
-        jButton2.setText("Attendance");
+        jButton2.setText("Kehadiran");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -106,7 +117,7 @@ public class AdminPage extends javax.swing.JFrame {
         });
 
         jButton3.setBackground(new java.awt.Color(0, 51, 255));
-        jButton3.setText("Settings");
+        jButton3.setText("Pengaturan");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -114,7 +125,7 @@ public class AdminPage extends javax.swing.JFrame {
         });
 
         jButton4.setBackground(new java.awt.Color(0, 51, 255));
-        jButton4.setText("Report");
+        jButton4.setText("Laporan");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -347,3 +358,5 @@ public class AdminPage extends javax.swing.JFrame {
     }
     
 }
+
+

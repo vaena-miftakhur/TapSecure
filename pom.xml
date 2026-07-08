@@ -30,5 +30,20 @@
             <version>RELEASE250</version>
         </dependency>
     </dependencies>
+    
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+    
     <name>TapSecure 2</name>
 </project>
